@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Planning Présence — Mai 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c18;--s1:#0f1423;--s2:#161d33;--s3:#1e2740;
+  --border:#252f4a;--text:#e2e8f7;--muted:#6b7a99;--muted2:#8892b0;
+  --accent:#5b8cff;--green:#23d18b;--red:#ff5470;--yellow:#ffc857;
+  --orange:#ff8c42;--purple:#b97aff;--wa:#25d366;--wa-d:#1dba58;
+  --teal:#00d4c8;--teal-d:#00a89e;
+  --AB:#5b8cff;--PL:#b97aff;--CA:#23d18b;--PC:#ff8c42;--PE:#ff5470;--GC:#ffc857;
+  --CI:#00d4c8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh}
+
+#modeScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 18px;gap:14px}
+.mode-logo{font-size:1.55rem;font-weight:900;text-align:center}.mode-logo span{color:var(--accent)}
+.mode-sub{font-size:.8rem;color:var(--muted2);text-align:center;margin-bottom:6px}
+.mode-btn{width:100%;max-width:370px;padding:18px 20px;border-radius:14px;border:2px solid var(--border);background:var(--s2);cursor:pointer;transition:.2s;text-align:left;display:flex;align-items:center;gap:14px;color:var(--text)}
+.mode-btn:hover{border-color:var(--accent);background:var(--s3);transform:translateY(-2px)}
+.mode-btn.infirm{border-color:rgba(0,212,200,.25);background:rgba(0,212,200,.05)}
+.mode-btn.infirm:hover{border-color:var(--teal);background:rgba(0,212,200,.1)}
+.mode-icon{font-size:1.9rem;flex-shrink:0}
+.mode-title{font-size:.97rem;font-weight:800;margin-bottom:2px;color:var(--text)}
+.mode-desc{font-size:.72rem;color:var(--muted2)}
+.mode-separator{width:100%;max-width:370px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.7rem}
+.mode-separator::before,.mode-separator::after{content:'';flex:1;height:1px;background:var(--border)}
+
+#pinScreen{position:fixed;inset:0;background:var(--bg);z-index:9998;display:none;flex-direction:column;align-items:center;justify-content:center;padding:28px 18px;gap:13px}
+.pin-title{font-size:1.15rem;font-weight:800;text-align:center}
+.pin-sub{font-size:.78rem;color:var(--muted2);text-align:center}
+.pin-display{display:flex;gap:12px;margin:4px 0 16px}
+.pin-dot{width:17px;height:17px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:.2s}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent)}
+.pin-dot.error{background:var(--red);border-color:var(--red);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pin-grid{display:grid;grid-template-columns:repeat(3,68px);grid-template-rows:repeat(4,68px);gap:9px}
+.pin-key{background:var(--s2);border:1px solid var(--border);border-radius:11px;font-size:1.35rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;user-select:none;color:var(--text)}
+.pin-key:hover{background:var(--s3);border-color:var(--accent)}.pin-key:active{transform:scale(.92)}
+.pin-key.del{font-size:.95rem;color:var(--muted2)}.pin-key.zero{grid-column:2}
+.pin-error-msg{color:var(--red);font-size:.78rem;text-align:center;min-height:18px}
+.back-btn-sm{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:7px 18px;border-radius:7px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.78rem;transition:.15s}
+.back-btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+
+#vFille{display:none}#vInfirm{display:none}
+.fw{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 15px 40px}
+.fhdr{text-align:center;margin-bottom:20px;background:linear-gradient(135deg,var(--s1),var(--s2));width:100%;max-width:420px;padding:18px;border-radius:14px;border:1px solid var(--border)}
+.fhdr.infirm-hdr{border-color:rgba(0,212,200,.25);background:linear-gradient(135deg,#080c18,#0d1f1e)}
+.fhdr h1{font-size:1.2rem;font-weight:800;margin-bottom:3px}.fhdr h1 span{color:var(--accent)}
+.fhdr.infirm-hdr h1 span{color:var(--teal)}
+.fhdr p{font-size:.75rem;color:var(--muted2)}
+.fclock{font-family:'JetBrains Mono',monospace;font-size:1.45rem;font-weight:700;color:var(--accent);margin:5px 0}
+.fclock.teal{color:var(--teal)}
+.fwin{width:100%;max-width:420px;border-radius:11px;padding:11px 15px;display:flex;align-items:center;gap:8px;font-size:.8rem;margin-bottom:14px;border:1px solid;color:var(--text)}
+.fwin.open-m{background:rgba(91,140,255,.08);border-color:rgba(91,140,255,.3);color:var(--accent)}
+.fwin.open-s{background:rgba(185,122,255,.08);border-color:rgba(185,122,255,.3);color:var(--purple)}
+.fwin.closed{background:rgba(255,84,112,.06);border-color:rgba(255,84,112,.2);color:var(--red)}
+.fwin-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fwin-dot.on-m{background:var(--accent);box-shadow:0 0 7px var(--accent);animation:blink 2s infinite}
+.fwin-dot.on-s{background:var(--purple);box-shadow:0 0 7px var(--purple);animation:blink 2s infinite}
+.fwin-dot.off{background:var(--red)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.step-card{width:100%;max-width:420px;background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:13px}
+.step-title{font-size:.66rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:9px}
+.sel-wrapper{position:relative}
+.big-sel{width:100%;background:var(--s3);border:2px solid var(--border);color:var(--text);border-radius:11px;padding:12px 36px 12px 14px;font-family:'Outfit',sans-serif;font-size:.97rem;font-weight:700;cursor:pointer;appearance:none;transition:.2s}
+.big-sel:focus{outline:none;border-color:var(--accent)}
+.big-sel.infirm-sel:focus{border-color:var(--teal)}
+.big-sel option{background:var(--s2);color:var(--text);font-weight:600}
+.big-sel optgroup{color:var(--muted2);font-size:.8rem}
+.sel-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted2);font-size:.85rem}
+.cren-card{width:100%;max-width:420px;border-radius:14px;padding:15px;margin-bottom:12px;border:2px solid}
+.cren-title{font-size:.66rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;opacity:.85;display:flex;align-items:center;justify-content:space-between}
+.cren-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.cren-row:last-child{margin-bottom:0}
+.cren-lbl{font-size:.76rem;opacity:.7;color:var(--text)}.cren-val{font-size:.86rem;font-weight:700;color:var(--text)}
+.cren-sec{display:inline-block;padding:3px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.86rem;font-weight:700}
+.cren-euro{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:900}
+.cren-heure{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:900;color:var(--teal)}
+.conf-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:.6rem;font-weight:700}
+.conf-pill.ok{background:rgba(35,209,139,.15);color:var(--green);border:1px solid rgba(35,209,139,.3)}
+.conf-pill.wait{background:rgba(107,122,153,.12);color:var(--muted2);border:1px solid var(--border)}
+.wa-btn{width:100%;max-width:420px;padding:17px;border:none;border-radius:14px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s;text-decoration:none;letter-spacing:.3px;margin-bottom:10px;color:#fff}
+.wa-btn.matin{background:var(--accent)}
+.wa-btn.matin:hover{background:#3a6bdb;transform:translateY(-2px);box-shadow:0 8px 24px rgba(91,140,255,.35)}
+.wa-btn.soir{background:var(--purple)}
+.wa-btn.soir:hover{background:#9a5fe0;transform:translateY(-2px);box-shadow:0 8px 24px rgba(185,122,255,.35)}
+.wa-btn.inf-matin{background:var(--teal);color:#001a19}
+.wa-btn.inf-matin:hover{background:var(--teal-d);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,200,.35)}
+.wa-btn.inf-soir{background:#7c5cbf;color:#fff}
+.wa-btn.inf-soir:hover{background:#6a4daa;transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,92,191,.35)}
+.wa-btn.disabled{background:var(--s3);color:var(--muted2);cursor:not-allowed;transform:none !important;box-shadow:none !important;border:1px solid var(--border)}
+.wa-btn.confirmed{background:rgba(35,209,139,.15);color:var(--green);border:1px solid rgba(35,209,139,.3);cursor:default}
+.fille-notice{width:100%;max-width:420px;font-size:.71rem;color:var(--muted2);text-align:center;line-height:1.6;margin-bottom:6px}
+.back-btn{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:7px 18px;border-radius:7px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.76rem;margin-top:20px;transition:.15s}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.total-jour{width:100%;max-width:420px;background:var(--s2);border:1px solid rgba(35,209,139,.22);border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.total-jour-lbl{font-size:.64rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);margin-bottom:4px}
+.repos-card{width:100%;max-width:420px;text-align:center;background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:26px;color:var(--text)}
+.bilan-card{width:100%;max-width:420px;text-align:center;background:rgba(0,212,200,.06);border:1px solid rgba(0,212,200,.25);border-radius:14px;padding:26px;color:var(--teal)}
+.conge-card{width:100%;max-width:420px;text-align:center;background:rgba(255,200,87,.06);border:1px solid rgba(255,200,87,.25);border-radius:14px;padding:26px;color:var(--yellow)}
+.abs-card{width:100%;max-width:420px;text-align:center;background:rgba(255,84,112,.06);border:1px solid rgba(255,84,112,.25);border-radius:14px;padding:26px;color:var(--red)}
+.badge-bl{display:inline-block;padding:3px 10px;border-radius:6px;background:rgba(0,212,200,.15);border:1px solid rgba(0,212,200,.3);color:var(--teal);font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:5px}
+
+#vAdmin{display:none}
+.ahdr{background:linear-gradient(135deg,var(--s1),var(--s2));border-bottom:1px solid var(--border);padding:13px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.logo{font-size:1.25rem;font-weight:800;color:var(--text)}.logo span{color:var(--accent)}
+.sub{color:var(--muted2);font-size:.7rem}
+.aclock{background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:4px 11px;font-family:'JetBrains Mono',monospace;font-size:.86rem;color:var(--accent);min-width:80px;text-align:center;margin-left:auto}
+.logout-btn{display:flex;align-items:center;gap:5px;background:rgba(255,84,112,.08);border:1px solid rgba(255,84,112,.2);color:var(--red);padding:4px 11px;border-radius:6px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.73rem;font-weight:600;transition:.15s}
+.logout-btn:hover{background:rgba(255,84,112,.15)}
+.ctrl{padding:11px 22px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.date-nav{display:flex;align-items:center;gap:6px}
+.btn-d{background:var(--s3);border:1px solid var(--border);color:var(--text);width:28px;height:28px;border-radius:6px;font-size:.95rem;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center}
+.btn-d:hover{background:var(--accent);border-color:var(--accent)}
+#curDate{font-weight:700;font-size:.88rem;min-width:165px;text-align:center;color:var(--text)}
+.tabs{display:flex;gap:3px;margin-left:auto;flex-wrap:wrap}
+.tab{padding:5px 13px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;transition:.15s}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.tab:not(.on):hover{border-color:var(--accent);color:var(--accent)}
+.winbar{padding:7px 22px;font-size:.75rem;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;color:var(--text)}
+.winbar.open-m{background:rgba(91,140,255,.06)}
+.winbar.open-s{background:rgba(185,122,255,.06)}
+.winbar.closed{background:rgba(255,84,112,.05)}
+.wdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.wdot.on-m{background:var(--accent);box-shadow:0 0 5px var(--accent);animation:blink 2s infinite}
+.wdot.on-s{background:var(--purple);box-shadow:0 0 5px var(--purple);animation:blink 2s infinite}
+.wdot.off{background:var(--red)}
+.amain{padding:18px 22px;display:grid;grid-template-columns:1fr 330px;gap:18px}
+@media(max-width:880px){.amain{grid-template-columns:1fr}}
+.view{display:none}.view.on{display:block}
+.sh{display:flex;align-items:center;gap:8px;margin-bottom:13px;font-size:.63rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2)}
+.sh::after{content:'';flex:1;height:1px;background:var(--border)}
+.spill{padding:3px 9px;border-radius:20px;font-size:.63rem;font-weight:700}
+.sm{background:rgba(91,140,255,.12);color:var(--accent);border:1px solid rgba(91,140,255,.25)}
+.ss{background:rgba(185,122,255,.12);color:var(--purple);border:1px solid rgba(185,122,255,.25)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:20px}
+.scard{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;border-left:3px solid;transition:.2s}
+.scard:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.sc-code{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700}
+.sc-name{font-size:.66rem;color:var(--muted2);margin-top:1px}
+.sbadge{padding:2px 7px;border-radius:20px;font-size:.61rem;font-weight:700}
+.bp{background:rgba(91,140,255,.12);color:var(--accent)}.br{background:rgba(255,140,66,.12);color:var(--orange)}.bf{background:rgba(255,84,112,.1);color:var(--red)}
+.sc-plan{font-size:.68rem;color:var(--muted2);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.sc-plan strong{color:var(--text)}
+.sw{position:relative;margin-bottom:6px}
+.sel{width:100%;background:var(--s3);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 26px 6px 8px;font-family:'Outfit',sans-serif;font-size:.81rem;font-weight:600;cursor:pointer;appearance:none;transition:.15s}
+.sel:focus{outline:none;border-color:var(--accent)}
+.sarr{position:absolute;right:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted2);font-size:.65rem}
+.wa-s{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:5px;background:var(--wa);color:#fff;border:none;border-radius:6px;font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;text-decoration:none;transition:.15s}
+.wa-s:hover{background:var(--wa-d);transform:translateY(-1px)}
+.c-AB{color:var(--AB);border-left-color:var(--AB)}.c-PL{color:var(--PL);border-left-color:var(--PL)}
+.c-CA{color:var(--CA);border-left-color:var(--CA)}.c-PC{color:var(--PC);border-left-color:var(--PC)}
+.c-PE{color:var(--PE);border-left-color:var(--PE)}.c-GC{color:var(--GC);border-left-color:var(--GC)}
+.c-CI{color:var(--CI);border-left-color:var(--CI)}
+.bg-AB{background:rgba(91,140,255,.17);color:var(--AB)}.bg-PL{background:rgba(185,122,255,.17);color:var(--PL)}
+.bg-CA{background:rgba(35,209,139,.17);color:var(--CA)}.bg-PC{background:rgba(255,140,66,.17);color:var(--PC)}
+.bg-PE{background:rgba(255,84,112,.17);color:var(--PE)}.bg-GC{background:rgba(255,200,87,.17);color:var(--GC)}
+.bg-CI{background:rgba(0,212,200,.17);color:var(--CI)}
+.panel{display:flex;flex-direction:column;gap:12px}
+.pcard{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.ptitle{font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ptitle::after{content:'';flex:1;height:1px;background:var(--border)}
+.rtable{width:100%;border-collapse:collapse;font-size:.75rem}
+.rtable th{padding:4px 5px;text-align:left;color:var(--muted2);font-size:.6rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+.rtable td{padding:4px 5px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;color:var(--text)}
+.rtable tr:last-child td{border:none}
+.chip{display:inline-block;padding:2px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:700}
+.pres-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem}
+.pres-row:last-child{border:none}
+.pres-name{font-weight:600;font-size:.76rem;color:var(--text)}
+.pres-btns{display:flex;gap:5px}
+.pres-btn{padding:3px 9px;border-radius:5px;font-size:.62rem;font-weight:700;cursor:pointer;border:1px solid;font-family:'Outfit',sans-serif;transition:.15s}
+.pres-btn.m-on{background:rgba(91,140,255,.15);color:var(--accent);border-color:rgba(91,140,255,.3)}
+.pres-btn.m-off{background:transparent;color:var(--muted2);border-color:var(--border)}
+.pres-btn.s-on{background:rgba(185,122,255,.15);color:var(--purple);border-color:rgba(185,122,255,.3)}
+.pres-btn.s-off{background:transparent;color:var(--muted2);border-color:var(--border)}
+.pres-btn:hover{opacity:.8}
+.sub-tabs{display:flex;gap:4px;margin-bottom:12px}
+.sub-tab{padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:600;transition:.15s}
+.sub-tab.on{background:var(--teal);border-color:var(--teal);color:#001a19}
+.sub-tab.on.as{background:var(--accent);border-color:var(--accent);color:#fff}
+.sub-tab:not(.on):hover{border-color:var(--accent);color:var(--accent)}
+.inf-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.55rem;font-weight:700;background:rgba(0,212,200,.13);color:var(--teal);border:1px solid rgba(0,212,200,.25);margin-left:4px;vertical-align:middle}
+.bl-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.55rem;font-weight:700;background:rgba(0,212,200,.13);color:var(--teal);border:1px solid rgba(0,212,200,.25)}
+.conge-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.55rem;font-weight:700;background:rgba(255,200,87,.13);color:var(--yellow);border:1px solid rgba(255,200,87,.25)}
+.abs-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.55rem;font-weight:700;background:rgba(255,84,112,.13);color:var(--red);border:1px solid rgba(255,84,112,.25)}
+.ferie-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.6rem;font-weight:700;background:rgba(185,122,255,.15);color:var(--purple);border:1px solid rgba(185,122,255,.3);margin-left:5px}
+
+.qwrap{padding:18px 22px}
+.qsection{margin-bottom:28px}
+.qtitle{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.qtitle::after{content:'';flex:1;height:1px;background:var(--border)}
+.qtable{width:100%;border-collapse:collapse;background:var(--s2);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.qtable th{padding:9px 12px;text-align:left;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);border-bottom:1px solid var(--border);background:var(--s3)}
+.qtable td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;vertical-align:middle;color:var(--text)}
+.qtable tr:last-child td{border:none}
+.qtable tr.total-row td{font-weight:800;background:rgba(35,209,139,.05);border-top:1px solid rgba(35,209,139,.2)}
+.qeuro{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green)}
+.qh{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted2)}
+.pres-count{font-family:'JetBrains Mono',monospace;font-size:.72rem}
+.pres-m{color:var(--accent)}.pres-s{color:var(--purple)}
+
+.hwrap{padding:18px 22px}
+.tarif-box{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:9px;margin-bottom:14px}
+.tarif-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.tlbl{font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);margin-bottom:3px}
+.tval{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--text)}
+.tsub{font-size:.61rem;color:var(--muted2);margin-top:2px}
+.grand-total{background:var(--s2);border:1px solid rgba(35,209,139,.22);border-radius:10px;padding:13px 16px;margin-bottom:15px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.gt-item{display:flex;flex-direction:column;gap:2px}
+.gt-lbl{font-size:.59rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2)}
+.gt-val{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:800;color:var(--green)}
+.gt-sub{font-size:.66rem;color:var(--muted2)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.pc2{background:var(--s2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.pc2-hd{padding:11px 13px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:var(--s3)}
+.pc2-name{font-weight:800;font-size:.9rem;color:var(--text)}
+.pc2-euro{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--green)}
+.pc2-body{padding:10px 13px}
+.dline{display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.7rem}
+.dline:last-child{border:none}
+.dlbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;min-width:46px;color:var(--muted2)}
+.we-pill{padding:1px 4px;border-radius:3px;font-size:.53rem;font-weight:700;background:rgba(185,122,255,.13);color:var(--purple)}
+.ferie-pill{padding:1px 4px;border-radius:3px;font-size:.53rem;font-weight:700;background:rgba(185,122,255,.13);color:var(--purple)}
+.sl{font-size:.59rem;padding:2px 4px;border-radius:3px;font-weight:700}
+.sl-m{background:rgba(91,140,255,.13);color:var(--accent)}.sl-s{background:rgba(185,122,255,.13);color:var(--purple)}
+.deuro{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--green);white-space:nowrap}
+.pres-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pres-dot.ok{background:var(--green)}.pres-dot.no{background:var(--border)}
+.ptrow{margin-top:7px;padding:7px 9px;background:rgba(35,209,139,.06);border:1px solid rgba(35,209,139,.13);border-radius:6px;display:flex;justify-content:space-between;align-items:center}
+.pth{font-size:.71rem;color:var(--muted2)}.pte{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);font-size:.86rem}
+.rwrap{padding:18px 22px;max-width:460px}
+.mini-total-item{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text)}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:.8rem;transform:translateY(55px);opacity:0;transition:.3s;z-index:9999;max-width:280px;color:var(--text)}
+.toast.show{transform:translateY(0);opacity:1}.toast.ok{border-color:var(--green)}.toast.err{border-color:var(--red)}.toast.info{border-color:var(--accent)}
+.wa-ico{width:19px;height:19px;flex-shrink:0}.wa-ico-sm{width:11px;height:11px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- ACCUEIL -->
+<div id="modeScreen">
+  <div class="mode-logo">🗺️ Planning <span>Mai 2026</span></div>
+  <div class="mode-sub">Guadeloupe · AM + PM</div>
+  <button class="mode-btn" onclick="goFille()">
+    <div class="mode-icon">👩</div>
+    <div><div class="mode-title">Je suis une aide-soignante</div><div class="mode-desc">Voir mon secteur et confirmer ma présence</div></div>
+  </button>
+  <div class="mode-separator">ou</div>
+  <button class="mode-btn infirm" onclick="goInfirm()">
+    <div class="mode-icon">🩺</div>
+    <div><div class="mode-title" style="color:var(--teal)">Cabinet Infirmier du Nord</div><div class="mode-desc">Infirmières · Secteurs CI / PL / PC</div></div>
+  </button>
+  <button class="mode-btn" onclick="showPin()">
+    <div class="mode-icon">🔐</div>
+    <div><div class="mode-title">Accès responsable</div><div class="mode-desc">Code PIN requis — Planning, présences, paiements</div></div>
+  </button>
+</div>
+
+<!-- PIN -->
+<div id="pinScreen">
+  <div class="pin-title">🔐 Accès Responsable</div>
+  <div class="pin-sub">Code à 4 chiffres</div>
+  <div class="pin-display">
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-grid">
+    <div class="pin-key" onclick="pinKey('1')">1</div><div class="pin-key" onclick="pinKey('2')">2</div><div class="pin-key" onclick="pinKey('3')">3</div>
+    <div class="pin-key" onclick="pinKey('4')">4</div><div class="pin-key" onclick="pinKey('5')">5</div><div class="pin-key" onclick="pinKey('6')">6</div>
+    <div class="pin-key" onclick="pinKey('7')">7</div><div class="pin-key" onclick="pinKey('8')">8</div><div class="pin-key" onclick="pinKey('9')">9</div>
+    <div class="pin-key del" onclick="pinDel()">⌫</div><div class="pin-key zero" onclick="pinKey('0')">0</div>
+  </div>
+  <div class="pin-error-msg" id="pinErr"></div>
+  <button class="back-btn-sm" onclick="goBack()">← Retour</button>
+</div>
+
+<!-- VUE AIDES-SOIGNANTES -->
+<div id="vFille">
+  <div class="fw">
+    <div class="fhdr">
+      <div style="font-size:1.7rem;margin-bottom:3px">🗺️</div>
+      <h1>Tournée <span>Mai 2026</span></h1>
+      <div class="fclock" id="fclock">--:--:--</div>
+      <p>☀️ Matin 5h00–6h30 · 🌙 Soir 14h30–15h30</p>
+    </div>
+    <div class="fwin closed" id="fWin"><div class="fwin-dot off" id="fWinDot"></div><span id="fWinTxt">Chargement…</span></div>
+    <div class="step-card" style="text-align:center;padding:12px">
+      <div style="font-size:.66rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:4px">Journée du</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--text)" id="fDateDisp">—</div>
+    </div>
+    <div class="step-card">
+      <div class="step-title">① Sélectionne ton prénom</div>
+      <div class="sel-wrapper">
+        <select class="big-sel" id="fNomSel" onchange="onFilleNom()">
+          <option value="">— Choisis ton prénom —</option>
+          <option>Cedrina</option><option>Clara H.</option><option>Clarisse</option>
+          <option>Gina</option><option>Gladys</option><option>Maureen</option>
+          <option>Mélissa</option><option>Natacha</option><option>Noria</option><option>Trycia</option>
+        </select>
+        <span class="sel-arrow">▾</span>
+      </div>
+    </div>
+    <div id="fCreneaux" style="display:none;width:100%;max-width:420px">
+      <div class="cren-card" id="fMatinCard" style="display:none">
+        <div class="cren-title"><span id="fMatinTitle">② Secteur MATIN ☀️</span><span class="conf-pill wait" id="fMatinPill">En attente</span></div>
+        <div class="cren-row"><span class="cren-lbl">Secteur</span><span class="cren-sec" id="fMatinSec">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Lieu</span><span class="cren-val" id="fMatinLieu">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Durée</span><span class="cren-val">6h00</span></div>
+        <div class="cren-row" style="margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,.08)">
+          <span class="cren-lbl">Rémunération</span><span class="cren-euro" id="fMatinEuro">—</span>
+        </div>
+      </div>
+      <div class="cren-card" id="fSoirCard" style="display:none">
+        <div class="cren-title"><span id="fSoirTitle">Secteur SOIR 🌙</span><span class="conf-pill wait" id="fSoirPill">En attente</span></div>
+        <div class="cren-row"><span class="cren-lbl">Secteur</span><span class="cren-sec" id="fSoirSec">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Lieu</span><span class="cren-val" id="fSoirLieu">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Durée</span><span class="cren-val">4h00</span></div>
+        <div class="cren-row" style="margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,.08)">
+          <span class="cren-lbl">Rémunération</span><span class="cren-euro" id="fSoirEuro">—</span>
+        </div>
+      </div>
+      <div class="total-jour" id="fTotalJour" style="display:none">
+        <div class="total-jour-lbl">Total journée</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.8rem;color:var(--muted2)" id="fTotalH">—</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:900;color:var(--green)" id="fTotalE">—</span>
+        </div>
+      </div>
+      <a class="wa-btn matin" id="waBtnMatin" href="#" onclick="onWAClick('matin')" target="_blank">
+        <svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        ② Confirmer présence MATIN
+      </a>
+      <a class="wa-btn soir" id="waBtnSoir" href="#" onclick="onWAClick('soir')" target="_blank" style="display:none">
+        <svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Confirmer présence SOIR
+      </a>
+      <div class="fille-notice" id="fNotice">Appuie sur le bouton → WhatsApp s'ouvre → <strong>Envoie le message</strong> ✅</div>
+    </div>
+    <div class="repos-card" id="fRepos" style="display:none">
+      <div style="font-size:2.3rem;margin-bottom:8px">😴</div>
+      <div style="font-size:1rem;font-weight:700;margin-bottom:4px">Repos aujourd'hui</div>
+      <div style="font-size:.78rem;color:var(--muted2)">Aucune tournée planifiée ce jour.</div>
+    </div>
+    <button class="back-btn" onclick="goBack()">← Retour</button>
+  </div>
+</div>
+
+<!-- VUE INFIRMIÈRES -->
+<div id="vInfirm">
+  <div class="fw">
+    <div class="fhdr infirm-hdr">
+      <div style="font-size:1.7rem;margin-bottom:3px">🩺</div>
+      <h1><span>Cabinet Infirmier du Nord</span></h1>
+      <div class="fclock teal" id="iClock">--:--:--</div>
+      <p style="color:var(--muted2)">☀️ Matin 5h00–6h30 · 🌙 Soir 14h30–15h30</p>
+    </div>
+    <div class="fwin closed" id="iWin"><div class="fwin-dot off" id="iWinDot"></div><span id="iWinTxt">Chargement…</span></div>
+    <div class="step-card" style="text-align:center;padding:12px">
+      <div style="font-size:.66rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:4px">Journée du</div>
+      <div style="font-size:1.1rem;font-weight:800;color:var(--text)" id="iDateDisp">—</div>
+    </div>
+    <div class="step-card">
+      <div class="step-title" style="color:var(--teal)">① Cabinet Infirmier du Nord — Sélectionne ton prénom</div>
+      <div class="sel-wrapper">
+        <select class="big-sel infirm-sel" id="iNomSel" onchange="onInfirmNom()">
+          <option value="">— Choisis ton prénom —</option>
+          <option>Gaëlle</option><option>Allan</option><option>Tracy</option>
+          <option>Sohane</option><option>Laetitia</option><option>Gène</option>
+        </select>
+        <span class="sel-arrow" style="color:var(--teal)">▾</span>
+      </div>
+    </div>
+    <div id="iCreneaux" style="display:none;width:100%;max-width:420px">
+      <div class="cren-card" id="iMatinCard" style="display:none;border-color:rgba(0,212,200,.3);background:rgba(0,212,200,.04)">
+        <div class="cren-title" style="color:var(--teal)">
+          <span id="iMatinTitle">② Secteur MATIN ☀️</span>
+          <span class="conf-pill wait" id="iMatinPill">En attente</span>
+        </div>
+        <div class="cren-row"><span class="cren-lbl">Secteur</span><span class="cren-sec" id="iMatinSec" style="background:rgba(0,212,200,.15);color:var(--teal)">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Lieu</span><span class="cren-val" id="iMatinLieu">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Durée</span><span class="cren-val">6h00</span></div>
+        <div class="cren-row" style="margin-top:7px;padding-top:7px;border-top:1px solid rgba(0,212,200,.15)">
+          <span class="cren-lbl">Heure de pointage</span><span class="cren-heure" id="iMatinHeure">—</span>
+        </div>
+      </div>
+      <div class="cren-card" id="iSoirCard" style="display:none;border-color:rgba(124,92,191,.3);background:rgba(124,92,191,.04)">
+        <div class="cren-title" style="color:#9d7de0">
+          <span id="iSoirTitle">Secteur SOIR 🌙</span>
+          <span class="conf-pill wait" id="iSoirPill">En attente</span>
+        </div>
+        <div class="cren-row"><span class="cren-lbl">Secteur</span><span class="cren-sec" id="iSoirSec" style="background:rgba(124,92,191,.15);color:#9d7de0">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Lieu</span><span class="cren-val" id="iSoirLieu">—</span></div>
+        <div class="cren-row"><span class="cren-lbl">Durée</span><span class="cren-val">4h00</span></div>
+        <div class="cren-row" style="margin-top:7px;padding-top:7px;border-top:1px solid rgba(124,92,191,.15)">
+          <span class="cren-lbl">Heure de pointage</span><span class="cren-heure" id="iSoirHeure" style="color:#9d7de0">—</span>
+        </div>
+      </div>
+      <a class="wa-btn inf-matin" id="waBtnIMatin" href="#" onclick="onWAInfirmClick('matin')" target="_blank">
+        <svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        ② Confirmer présence MATIN
+      </a>
+      <a class="wa-btn inf-soir" id="waBtnISoir" href="#" onclick="onWAInfirmClick('soir')" target="_blank" style="display:none">
+        <svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Confirmer présence SOIR
+      </a>
+      <div class="fille-notice" id="iNotice">Appuie sur le bouton → WhatsApp s'ouvre → <strong>Envoie le message</strong> ✅</div>
+    </div>
+    <div class="repos-card" id="iRepos" style="display:none"><div style="font-size:2.3rem;margin-bottom:8px">😴</div><div style="font-size:1rem;font-weight:700;margin-bottom:4px">Repos aujourd'hui</div><div style="font-size:.78rem;color:var(--muted2)">Aucun service planifié ce jour.</div></div>
+    <div class="conge-card" id="iConge" style="display:none"><div style="font-size:2.3rem;margin-bottom:8px">🏖️</div><div style="font-size:1rem;font-weight:700;margin-bottom:4px">Congé</div><div class="conge-badge">CONGÉ</div><div style="font-size:.78rem;color:var(--muted2);margin-top:8px">Journée de congé planifiée.</div></div>
+    <div class="abs-card" id="iAbs" style="display:none"><div style="font-size:2.3rem;margin-bottom:8px">🤒</div><div style="font-size:1rem;font-weight:700;margin-bottom:4px">Absence</div><div class="abs-badge">ABSENT(E)</div><div style="font-size:.78rem;margin-top:8px">Absence enregistrée ce jour.</div></div>
+    <button class="back-btn" onclick="goBack()">← Retour</button>
+  </div>
+</div>
+
+<!-- VUE ADMIN -->
+<div id="vAdmin">
+  <div class="ahdr">
+    <div>
+      <div class="logo">🗺️ Planning <span>Mai 2026</span> <span style="font-size:.58rem;background:rgba(255,84,112,.14);color:var(--red);padding:2px 6px;border-radius:3px;margin-left:5px;vertical-align:middle">ADMIN</span></div>
+      <div class="sub">☀️ 6h · 🌙 4h · 22€/h Lun→Sam · 23€/h Dim+Fériés</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;margin-left:auto">
+      <div class="aclock" id="aclock">--:--:--</div>
+      <button class="logout-btn" onclick="logout()">🔒 Verrouiller</button>
+    </div>
+  </div>
+  <div class="ctrl">
+    <div class="date-nav">
+      <button class="btn-d" onclick="changeDay(-1)">‹</button>
+      <div id="curDate">—</div>
+      <button class="btn-d" onclick="changeDay(+1)">›</button>
+    </div>
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('planning',this)">📋 Planning</button>
+      <button class="tab" onclick="switchTab('presences',this)">✅ Présences</button>
+      <button class="tab" onclick="switchTab('quinzaines',this)">💶 Quinzaines</button>
+      <button class="tab" onclick="switchTab('heures',this)">⏱ Heures</button>
+      <button class="tab" onclick="switchTab('reglages',this)">⚙️</button>
+    </div>
+  </div>
+  <div class="winbar closed" id="winbar">
+    <div style="display:flex;align-items:center;gap:6px"><div class="wdot off" id="wdotM"></div><span id="wtxtM">☀️ Matin —</span></div>
+    <div style="display:flex;align-items:center;gap:6px"><div class="wdot off" id="wdotS"></div><span id="wtxtS">🌙 Soir —</span></div>
+  </div>
+
+  <div id="vplanning" class="view on">
+    <div style="padding:10px 22px 0;display:flex;gap:4px;border-bottom:1px solid var(--border);background:var(--s1)">
+      <button class="sub-tab on as" id="planTabAS" onclick="switchPlanTab('as')">👩 Aides-Soignantes</button>
+      <button class="sub-tab" id="planTabInf" onclick="switchPlanTab('inf')">🩺 Infirmières</button>
+    </div>
+    <div id="planAS">
+      <div class="amain">
+        <div>
+          <div class="sh"><span class="spill sm">☀️ Matin</span></div>
+          <div class="sgrid" id="gridM"></div>
+          <div class="sh"><span class="spill ss">🌙 Soir</span></div>
+          <div class="sgrid" id="gridS"></div>
+        </div>
+        <div class="panel">
+          <div class="pcard"><div class="ptitle">📊 Récap journée</div><table class="rtable"><thead><tr><th>Secteur</th><th>Matin</th><th>Soir</th></tr></thead><tbody id="recapBody"></tbody></table></div>
+          <div class="pcard"><div class="ptitle">💶 Totaux mois (présences)</div><div id="miniTotaux"></div></div>
+        </div>
+      </div>
+    </div>
+    <div id="planINF" style="display:none">
+      <div class="amain">
+        <div>
+          <div class="sh" style="color:var(--teal)"><span style="padding:3px 9px;border-radius:20px;font-size:.63rem;font-weight:700;background:rgba(0,212,200,.12);color:var(--teal);border:1px solid rgba(0,212,200,.25)">☀️ Matin Infirmières</span></div>
+          <div class="sgrid" id="gridInfM"></div>
+          <div class="sh" style="color:var(--teal)"><span style="padding:3px 9px;border-radius:20px;font-size:.63rem;font-weight:700;background:rgba(124,92,191,.12);color:#9d7de0;border:1px solid rgba(124,92,191,.25)">🌙 Soir Infirmières</span></div>
+          <div class="sgrid" id="gridInfS"></div>
+        </div>
+        <div class="panel">
+          <div class="pcard"><div class="ptitle" style="color:var(--teal)">🩺 Récap infirmières</div><table class="rtable"><thead><tr><th>Nom</th><th>Matin</th><th>Soir</th></tr></thead><tbody id="recapInfBody"></tbody></table></div>
+          <div class="pcard" style="background:rgba(0,212,200,.03);border-color:rgba(0,212,200,.18)">
+            <div class="ptitle" style="color:var(--teal)">ℹ️ Légende</div>
+            <div style="font-size:.7rem;color:var(--muted2);line-height:1.9">
+              <span style="color:var(--teal);font-weight:700">CI</span> Centre IDE &nbsp;
+              <span style="color:var(--orange);font-weight:700">PC</span> Petit Canal &nbsp;
+              <span style="color:var(--purple);font-weight:700">PL</span> Port Louis<br>
+              <span class="abs-badge">ABS</span> Sohane 4–7 Mai
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="vpresences" class="view">
+    <div style="padding:18px 22px">
+      <div class="sub-tabs">
+        <button class="sub-tab on as" id="subTabAS" onclick="switchSubTab('as')">👩 Aides-Soignantes</button>
+        <button class="sub-tab" id="subTabInf" onclick="switchSubTab('inf')">🩺 Infirmières</button>
+      </div>
+      <div id="presAS"><div style="font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:10px">✅ Présences Aides-Soignantes</div><div id="presManuelleList"></div></div>
+      <div id="presINF" style="display:none"><div style="font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--teal);margin-bottom:10px">🩺 Présences Infirmières</div><div id="presInfirmList"></div></div>
+    </div>
+  </div>
+
+  <div id="vquinzaines" class="view">
+    <div class="qwrap">
+      <div class="qsection"><div class="qtitle">📅 1ère quinzaine (1–15)</div><table class="qtable" id="q1table"><thead><tr><th>Prénom</th><th>Matin</th><th>Soir</th><th>Heures</th><th>Montant</th></tr></thead><tbody></tbody></table></div>
+      <div class="qsection"><div class="qtitle">📅 2ème quinzaine (16–31)</div><table class="qtable" id="q2table"><thead><tr><th>Prénom</th><th>Matin</th><th>Soir</th><th>Heures</th><th>Montant</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+
+  <div id="vheures" class="view">
+    <div class="hwrap">
+      <div class="tarif-box">
+        <div class="tarif-card"><div class="tlbl">Sem/Sam matin</div><div class="tval">22€/h × 6h</div><div class="tsub">= 132€/j</div></div>
+        <div class="tarif-card"><div class="tlbl">Sem/Sam soir</div><div class="tval">22€/h × 4h</div><div class="tsub">= 88€/j</div></div>
+        <div class="tarif-card"><div class="tlbl">Dim/Férié matin</div><div class="tval">23€/h × 6h</div><div class="tsub">= 138€/j</div></div>
+        <div class="tarif-card"><div class="tlbl">Dim/Férié soir</div><div class="tval">23€/h × 4h</div><div class="tsub">= 92€/j</div></div>
+      </div>
+      <div class="grand-total">
+        <div class="gt-item"><div class="gt-lbl">Total</div><div class="gt-val" id="gtE">—</div></div>
+        <div class="gt-item"><div class="gt-lbl">Heures</div><div class="gt-sub" id="gtH">—</div></div>
+        <div class="gt-item"><div class="gt-lbl">☀️ Mat sem/sam</div><div class="gt-sub" id="gtSM">—</div></div>
+        <div class="gt-item"><div class="gt-lbl">☀️ Mat Dim/Fér</div><div class="gt-sub" id="gtWM">—</div></div>
+        <div class="gt-item"><div class="gt-lbl">🌙 Soir sem/sam</div><div class="gt-sub" id="gtSS">—</div></div>
+        <div class="gt-item"><div class="gt-lbl">🌙 Soir Dim/Fér</div><div class="gt-sub" id="gtWS">—</div></div>
+      </div>
+      <div class="pgrid" id="pgrid"></div>
+    </div>
+  </div>
+
+  <div id="vreglages" class="view">
+    <div class="rwrap">
+      <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:14px">⚙️ Réglages</div>
+      <div style="margin-top:18px;font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted2);margin-bottom:9px">ℹ️ Fenêtres de confirmation</div>
+      <div style="font-size:.76rem;color:var(--muted2);background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:11px 13px;line-height:1.8">
+        ☀️ <strong style="color:var(--text)">Matin</strong> : bouton actif de <strong style="color:var(--accent)">5h00 à 6h30</strong><br>
+        🌙 <strong style="color:var(--text)">Soir</strong> : bouton actif de <strong style="color:var(--purple)">14h30 à 15h30</strong><br>
+        🗓️ <strong>Mai 2026</strong> · Pas de férié ce mois-ci<br>
+        🟡 <strong style="color:var(--yellow)">Samedi</strong> = tarif normal 22€/h (comme lundi–vendredi)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════ CONSTANTES MAI 2026 ═══════════
+const PIN="2211";
+const H_M=6,H_S=4,T_SEM=22,T_MAJ=23;
+// Aucun jour férié en mai 2026
+const FERIES_DAYS=[];
+const WIN_MATIN={open:300,close:390};  // 5h00–6h30
+const WIN_SOIR ={open:870,close:930};  // 14h30–15h30
+const NOMS=["Cedrina","Clara H.","Clarisse","Gina","Gladys","Maureen","Mélissa","Natacha","Noria","Trycia"];
+const NOMS_INF=["Gaëlle","Allan","Tracy","Sohane","Laetitia","Gène"];
+const SEC_INFO={AB:{label:"Anse Bertrand"},PL:{label:"Port Louis"},CA:{label:"Campêche"},PC:{label:"Petit Canal"},PE:{label:"Pelletán"},GC:{label:"Gros Cap"}};
+const SEC_INF={CI:{label:"Centre IDE"},PL:{label:"Port Louis IDE"},PC:{label:"Petit Canal IDE"}};
+const SEC_COLORS={AB:"#5b8cff",PL:"#b97aff",CA:"#23d18b",PC:"#ff8c42",PE:"#ff5470",GC:"#ffc857",CI:"#00d4c8"};
+const DAY_FR=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+const MON_FR=["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"];
+
+// ═══ PLANNING AIDES-SOIGNANTES MAI 2026 ═══
+// MATIN (depuis feuille "MAI MATIN - ZONES")
+const MP={
+  "Cedrina":{8:"PC",9:"PC",15:"GC",29:"CA",30:"CA"},
+  "Clara H.":{1:"AB",2:"AB",6:"GC",7:"GC",8:"GC",9:"GC",10:"PL",11:"PL",12:"PL",13:"CA",14:"CA",15:"CA",16:"CA",18:"AB",19:"AB",20:"AB",21:"AB",22:"AB",23:"PE",24:"AB",25:"PE",26:"PE",27:"GC",28:"GC",29:"GC",30:"GC"},
+  "Clarisse":{2:"GC",3:"GC",4:"GC",5:"GC",6:"PC",7:"PC",9:"PL",11:"PE",12:"PE",14:"PC",16:"GC",17:"GC",18:"GC",19:"GC",20:"PE",21:"PE",23:"GC",24:"GC",25:"GC",26:"GC"},
+  "Gina":{3:"AB",5:"PC",7:"CA",10:"PE",13:"PC",15:"PE",16:"PC",20:"GC",23:"AB",24:"PE",25:"AB",27:"PC",30:"PE",31:"PE"},
+  "Gladys":{1:"PE",4:"PE",6:"PL",7:"PL",10:"PC",11:"PC",12:"PC",15:"PC",18:"CA",19:"CA",20:"CA",21:"CA",23:"PL",24:"PL",26:"AB",27:"AB",28:"AB",29:"AB",31:"AB"},
+  "Maureen":{1:"PC",2:"PC",3:"CA",4:"CA",5:"CA",7:"PE",8:"PE",9:"PE",11:"GC",12:"GC",13:"GC",14:"GC",17:"PE",19:"PC",20:"PC",21:"PC",22:"PC",25:"CA",26:"CA",27:"CA",28:"CA",31:"PC"},
+  "Mélissa":{1:"CA",2:"CA",6:"CA",8:"AB",9:"AB",10:"AB",11:"AB",13:"PL",14:"PL",15:"PL",16:"PL",17:"PL",20:"PL",21:"PL",22:"PL",24:"CA",28:"PC",29:"PC",30:"PC",31:"PC"},
+  "Natacha":{3:"PC",8:"PL",17:"PC",22:"PE",26:"PC",30:"AB",31:"CA"},
+  "Noria":{1:"PL",2:"PL",3:"PL",4:"PL",5:"PL",6:"PE",8:"CA",9:"CA",10:"GC",13:"AB",14:"AB",15:"AB",16:"AB",17:"AB",19:"PE",21:"GC",22:"GC",23:"PC",24:"PC",25:"PC",27:"PE",28:"PE",29:"PL",30:"PL",31:"PL"},
+  "Trycia":{1:"GC",5:"AB",6:"AB",7:"AB",10:"CA",11:"CA",12:"CA",13:"PE",14:"PE",17:"CA",18:"PL",19:"PL",22:"CA",23:"CA",25:"PL",26:"PL",27:"PL",28:"PL",31:"GC"},
+};
+
+// SOIR (depuis feuille "MAI SOIR - ZONES")
+const SP={
+  "Cedrina":{},
+  "Clara H.":{},
+  "Clarisse":{1:"GC",2:"GC",3:"GC",4:"GC",6:"GC",7:"GC",8:"GC",11:"CA",12:"CA",14:"GC",15:"GC",16:"GC",17:"GC",18:"CA",19:"CA",20:"GC",21:"GC",23:"CA",24:"CA",25:"CA",27:"GC",28:"GC",29:"GC"},
+  "Gina":{1:"CA",2:"CA",3:"CA",6:"CA",8:"PL",10:"CA",13:"PL",14:"PL",15:"PL",16:"PL",17:"PL",18:"AB",19:"AB",22:"CA",23:"GC",25:"GC",28:"PL"},
+  "Gladys":{6:"PL",10:"AB",15:"CA",18:"PL",20:"AB",21:"PL",26:"CA",27:"CA",28:"CA",31:"CA"},
+  "Maureen":{13:"GC",27:"AB",28:"CA"},
+  "Mélissa":{8:"PL",29:"CA",30:"CA"},
+  "Natacha":{3:"PL",4:"PL",6:"PL",20:"PL",22:"GC",26:"GC",30:"GC"},
+  "Noria":{1:"PL",2:"PL",29:"PL",30:"PL",31:"PL"},
+  "Trycia":{},
+};
+
+// ═══ PLANNING INFIRMIÈRES MAI 2026 ═══
+// MATIN - Secteur de base (sans ★)
+const IP_MATIN={
+  "Gaëlle":{1:"PL",2:"PL",3:"PL",4:"PL",5:"PL",7:"PC",8:"PC",12:"PL",13:"PL",14:"PL",15:"PL",17:"PC",20:"CI",21:"CI",25:"PC",27:"PL",28:"PL",30:"CI",31:"CI"},
+  "Allan":{1:"CI",4:"CI",6:"PL",7:"PL",9:"PC",10:"PC",11:"PC",13:"CI",14:"CI",16:"PL",17:"PL",18:"PL",20:"PL",21:"PL",26:"CI",27:"CI",29:"PC",30:"PC",31:"PC"},
+  "Tracy":{2:"PC",3:"PC",4:"PC",5:"PC",6:"PC",8:"CI",11:"PL",16:"CI",17:"CI",18:"CI",19:"CI",22:"PL",23:"PL",24:"PL",25:"PL",26:"PL",28:"CI",29:"CI"},
+  "Sohane":{1:"PC",8:"PL",9:"PL",10:"PL",12:"PC",13:"PC",15:"CI",18:"PC",19:"PC",20:"PC",22:"CI",23:"PC",24:"CI",25:"CI",28:"PC",29:"PL",30:"PL",31:"PL"},
+  "Laetitia":{2:"CI",3:"CI",5:"CI",6:"CI",7:"CI",9:"CI",10:"CI",11:"CI",12:"CI",14:"PC",15:"PC",16:"PC",19:"PL",21:"PC",22:"PC",23:"CI",24:"PC",26:"PC",27:"PC"},
+  "Gène":{},
+};
+
+// SOIR - Ceux qui ont une ★ dans le planning (travail le soir ce jour-là)
+const IP_SOIR={
+  "Gaëlle":{4:"PL",8:"PC",14:"PL",20:"CI",30:"CI"},
+  "Allan":{1:"CI",7:"PL",13:"CI",26:"CI",31:"PC"},
+  "Tracy":{2:"PC",3:"PC",5:"PC",6:"PC",16:"CI",17:"CI",19:"CI"},
+  "Sohane":{9:"PL",12:"PC",18:"PC",24:"CI",25:"CI",29:"PL"},
+  "Laetitia":{10:"CI",11:"CI",22:"PC",23:"CI"},
+  "Gène":{},
+};
+
+// Absences Sohane (4-7 Mai)
+const IP_ABS={"Sohane":[4,5,6,7]};
+
+// ═══════════ HELPERS ═══════════
+function isMaj(d){const w=new Date(2026,4,d).getDay();return w===0||FERIES_DAYS.includes(d)}
+function isFerie(d){return FERIES_DAYS.includes(d)}
+function fmtDate(d){return`${DAY_FR[d.getDay()]} ${d.getDate()} ${MON_FR[d.getMonth()]} ${d.getFullYear()}`}
+function dateKey(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function dayKey(day){return`2026-05-${String(day).padStart(2,'0')}`}
+function dayLbl(d){return`${DAY_FR[new Date(2026,4,d).getDay()]} ${d}`}
+function calcE(h,day){return h*(isMaj(day)?T_MAJ:T_SEM)}
+function hexRgb(hex){return`${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`}
+function mins(now){return now.getHours()*60+now.getMinutes()}
+function inWin(now,win){const m=mins(now);return m>=win.open&&m<win.close}
+function sameDay(a,b){return a.getDate()===b.getDate()&&a.getMonth()===b.getMonth()&&a.getFullYear()===b.getFullYear()}
+function fmtHeure(now){return`${String(now.getHours()).padStart(2,'0')}h${String(now.getMinutes()).padStart(2,'0')}`}
+
+// ═══════════ STATE ═══════════
+const SK="plan_mai26";const PK="pres_mai26";const PIK="pres_inf_mai26";const SIK="state_inf_mai26";
+let state={},presences={},presInf={},stateInfirm={};
+try{state=JSON.parse(localStorage.getItem(SK)||'{}')}catch(e){}
+try{presences=JSON.parse(localStorage.getItem(PK)||'{}')}catch(e){}
+try{presInf=JSON.parse(localStorage.getItem(PIK)||'{}')}catch(e){}
+try{stateInfirm=JSON.parse(localStorage.getItem(SIK)||'{}')}catch(e){}
+function saveState(){localStorage.setItem(SK,JSON.stringify(state))}
+function savePres(){localStorage.setItem(PK,JSON.stringify(presences))}
+function savePresInf(){localStorage.setItem(PIK,JSON.stringify(presInf))}
+function saveStateInf(){localStorage.setItem(SIK,JSON.stringify(stateInfirm))}
+function setPres(dateK,nom,shift,val){if(!presences[dateK])presences[dateK]={};if(!presences[dateK][nom])presences[dateK][nom]={matin:false,soir:false};presences[dateK][nom][shift]=val;savePres()}
+function getPres(dateK,nom,shift){return(presences[dateK]?.[nom]?.[shift])||false}
+function setPresInf(dateK,nom,shift,val){if(!presInf[dateK])presInf[dateK]={};if(!presInf[dateK][nom])presInf[dateK][nom]={matin:false,soir:false};presInf[dateK][nom][shift]=val;savePresInf()}
+function getPresInf(dateK,nom,shift){return(presInf[dateK]?.[nom]?.[shift])||false}
+
+// ═══════════ PIN ═══════════
+let pinEntry="";
+function showPin(){document.getElementById('modeScreen').style.display='none';document.getElementById('pinScreen').style.display='flex';pinEntry="";updPinDots()}
+function pinKey(k){if(pinEntry.length>=4)return;pinEntry+=k;updPinDots();if(pinEntry.length===4)setTimeout(checkPin,120)}
+function pinDel(){pinEntry=pinEntry.slice(0,-1);updPinDots();document.getElementById('pinErr').textContent=''}
+function updPinDots(){for(let i=0;i<4;i++){const d=document.getElementById(`pd${i}`);d.className='pin-dot'+(i<pinEntry.length?' filled':'')}}
+function checkPin(){
+  if(pinEntry===PIN){document.getElementById('pinScreen').style.display='none';goAdmin()}
+  else{document.getElementById('pinErr').textContent='❌ Code incorrect';for(let i=0;i<4;i++)document.getElementById(`pd${i}`).className='pin-dot error';pinEntry="";setTimeout(()=>{updPinDots();document.getElementById('pinErr').textContent=''},900)}
+}
+function logout(){document.getElementById('vAdmin').style.display='none';document.getElementById('modeScreen').style.display='flex';showToast('🔒 Session fermée','ok')}
+
+// ═══════════ NAVIGATION ═══════════
+function goFille(){document.getElementById('modeScreen').style.display='none';document.getElementById('vFille').style.display='block';startFilleClock();onFilleNom()}
+function goInfirm(){document.getElementById('modeScreen').style.display='none';document.getElementById('vInfirm').style.display='block';startInfirmClock();onInfirmNom()}
+function goAdmin(){document.getElementById('vAdmin').style.display='block';render();startAdminClock()}
+function goBack(){document.getElementById('modeScreen').style.display='flex';['vFille','pinScreen','vAdmin','vInfirm'].forEach(id=>document.getElementById(id).style.display='none');pinEntry="";updPinDots()}
+
+// ═══════════ VUE AIDES-SOIGNANTES ═══════════
+const filleDate=(()=>{const t=new Date();return(t.getMonth()===4&&t.getFullYear()===2026)?t:new Date(2026,4,1)})();
+let filleClockInt=null;
+function startFilleClock(){
+  if(filleClockInt)clearInterval(filleClockInt);
+  function tick(){const now=new Date();document.getElementById('fclock').textContent=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;updFilleWindow(now)}
+  tick();filleClockInt=setInterval(tick,1000);
+}
+function updFilleWindow(now){
+  const fwin=document.getElementById('fWin'),fdot=document.getElementById('fWinDot'),ftxt=document.getElementById('fWinTxt');
+  const sd=sameDay(now,filleDate);const openM=sd&&inWin(now,WIN_MATIN);const openS=sd&&inWin(now,WIN_SOIR);
+  if(openM){fwin.className='fwin open-m';fdot.className='fwin-dot on-m';ftxt.textContent='☀️ Fenêtre MATIN ouverte — Confirme avant 6h30 !'}
+  else if(openS){fwin.className='fwin open-s';fdot.className='fwin-dot on-s';ftxt.textContent='🌙 Fenêtre SOIR ouverte — Confirme avant 15h30 !'}
+  else{fwin.className='fwin closed';fdot.className='fwin-dot off';const m=mins(now);
+    if(sd){if(m<WIN_MATIN.open)ftxt.textContent='🔒 Ouverture matin à 5h00';else if(m<WIN_SOIR.open)ftxt.textContent='🔒 Prochain créneau : soir 14h30';else ftxt.textContent="🔒 Fenêtres fermées pour aujourd'hui";}
+    else ftxt.textContent=filleDate>now?'📅 Confirme le jour J (5h–6h30 ou 14h30–15h30)':'🔒 Tournée passée';}
+  updWAButtons(now);
+}
+function onFilleNom(){
+  const nom=document.getElementById('fNomSel').value;
+  const day=filleDate.getDate(),maj=isMaj(day);
+  document.getElementById('fDateDisp').textContent=fmtDate(filleDate)+(isFerie(day)?' 🟣 Férié':'');
+  const cren=document.getElementById('fCreneaux'),repos=document.getElementById('fRepos');
+  if(!nom){cren.style.display='none';repos.style.display='none';return}
+  const secM=MP[nom]?.[day]||null,secS=SP[nom]?.[day]||null;
+  const dKey=dateKey(filleDate);
+  const presM=getPres(dKey,nom,'matin'),presS=getPres(dKey,nom,'soir');
+  if(!secM&&!secS){cren.style.display='none';repos.style.display='block';return}
+  repos.style.display='none';cren.style.display='block';
+  const taux=maj?T_MAJ:T_SEM;
+  if(secM){
+    document.getElementById('fMatinCard').style.display='block';
+    const c=SEC_COLORS[secM];
+    document.getElementById('fMatinCard').style.background=`rgba(${hexRgb(c)},.07)`;
+    document.getElementById('fMatinCard').style.borderColor=`rgba(${hexRgb(c)},.35)`;
+    const se=document.getElementById('fMatinSec');se.textContent=secM+(maj?' ⭐':'');se.style.background=`rgba(${hexRgb(c)},.18)`;se.style.color=c;
+    document.getElementById('fMatinLieu').textContent=SEC_INFO[secM]?.label||secM;
+    document.getElementById('fMatinEuro').textContent=calcE(H_M,day).toFixed(2)+' €'+(maj?' (Dim/Fér)':'');
+    const pill=document.getElementById('fMatinPill');
+    if(presM){pill.className='conf-pill ok';pill.textContent='✅ Confirmé'}else{pill.className='conf-pill wait';pill.textContent='En attente'}
+  }else document.getElementById('fMatinCard').style.display='none';
+  if(secS){
+    document.getElementById('fSoirCard').style.display='block';
+    const c=SEC_COLORS[secS];
+    document.getElementById('fSoirCard').style.background=`rgba(${hexRgb(c)},.07)`;
+    document.getElementById('fSoirCard').style.borderColor=`rgba(${hexRgb(c)},.35)`;
+    const se=document.getElementById('fSoirSec');se.textContent=secS+(maj?' ⭐':'');se.style.background=`rgba(${hexRgb(c)},.18)`;se.style.color=c;
+    document.getElementById('fSoirLieu').textContent=SEC_INFO[secS]?.label||secS;
+    document.getElementById('fSoirEuro').textContent=calcE(H_S,day).toFixed(2)+' €'+(maj?' (Dim/Fér)':'');
+    const pill=document.getElementById('fSoirPill');
+    if(presS){pill.className='conf-pill ok';pill.textContent='✅ Confirmé'}else{pill.className='conf-pill wait';pill.textContent='En attente'}
+    document.getElementById('waBtnSoir').style.display='flex';
+  }else{document.getElementById('fSoirCard').style.display='none';document.getElementById('waBtnSoir').style.display='none'}
+  const eM=secM?calcE(H_M,day):0,eS=secS?calcE(H_S,day):0;
+  const hT=(secM?H_M:0)+(secS?H_S:0);
+  if(hT>0){document.getElementById('fTotalJour').style.display='block';document.getElementById('fTotalH').textContent=`${hT}h de travail`;document.getElementById('fTotalE').textContent=(eM+eS).toFixed(2)+' €';}
+  else document.getElementById('fTotalJour').style.display='none';
+  buildWALinks(nom,day,secM,secS,eM,eS,maj);
+  updWAButtons(new Date());
+}
+function buildWALinks(nom,day,secM,secS,eM,eS,maj){
+  const heure=fmtHeure(new Date());
+  const tarifTag=maj?' ⭐ Dim/Férié':'';
+  let msgM=`✅ *PRÉSENCE MATIN*\n\n👩 *${nom}*\n📅 *${fmtDate(filleDate)}*${tarifTag}\n⏰ *${heure}*\n\n☀️ Secteur *${secM}* — ${SEC_INFO[secM]?.label||''}\n⏱ 6h`; 
+  document.getElementById('waBtnMatin').href=`https://wa.me/?text=${encodeURIComponent(msgM)}`;
+  if(secS){let msgS=`✅ *PRÉSENCE SOIR*\n\n👩 *${nom}*\n📅 *${fmtDate(filleDate)}*${tarifTag}\n⏰ *${heure}*\n\n🌙 Secteur *${secS}* — ${SEC_INFO[secS]?.label||''}\n⏱ 4h`;document.getElementById('waBtnSoir').href=`https://wa.me/?text=${encodeURIComponent(msgS)}`;} 
+}
+function updWAButtons(now){
+  const nom=document.getElementById('fNomSel').value;if(!nom)return;
+  const dKey=dateKey(filleDate);
+  const presM=getPres(dKey,nom,'matin'),presS=getPres(dKey,nom,'soir');
+  const sd=sameDay(now,filleDate);const openM=sd&&inWin(now,WIN_MATIN);const openS=sd&&inWin(now,WIN_SOIR);
+  const bm=document.getElementById('waBtnMatin'),bs=document.getElementById('waBtnSoir');
+  if(presM){bm.className='wa-btn confirmed';bm.textContent='✅ Présence MATIN confirmée'}
+  else if(openM)bm.className='wa-btn matin';else bm.className='wa-btn disabled';
+  if(presS){bs.className='wa-btn confirmed';bs.textContent='✅ Présence SOIR confirmée'}
+  else if(openS)bs.className='wa-btn soir';else bs.className='wa-btn disabled';
+}
+function onWAClick(shift){
+  const nom=document.getElementById('fNomSel').value;if(!nom)return true;
+  setPres(dateKey(filleDate),nom,shift,true);
+  showToast(`✅ Présence ${shift} enregistrée !`,'ok');setTimeout(()=>onFilleNom(),400);return true;
+}
+
+// ═══════════ VUE INFIRMIÈRES ═══════════
+const infirmDate=(()=>{const t=new Date();return(t.getMonth()===4&&t.getFullYear()===2026)?t:new Date(2026,4,1)})();
+let infirmClockInt=null;
+function startInfirmClock(){
+  if(infirmClockInt)clearInterval(infirmClockInt);
+  function tick(){const now=new Date();document.getElementById('iClock').textContent=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;updInfirmWindow(now)}
+  tick();infirmClockInt=setInterval(tick,1000);
+}
+function updInfirmWindow(now){
+  const fwin=document.getElementById('iWin'),fdot=document.getElementById('iWinDot'),ftxt=document.getElementById('iWinTxt');
+  const sd=sameDay(now,infirmDate);const openM=sd&&inWin(now,WIN_MATIN);const openS=sd&&inWin(now,WIN_SOIR);
+  if(openM){fwin.className='fwin open-m';fdot.className='fwin-dot on-m';ftxt.textContent='☀️ Fenêtre MATIN ouverte — Confirme avant 6h30 !'}
+  else if(openS){fwin.className='fwin open-s';fdot.className='fwin-dot on-s';ftxt.textContent='🌙 Fenêtre SOIR ouverte — Confirme avant 15h30 !'}
+  else{fwin.className='fwin closed';fdot.className='fwin-dot off';const m=mins(now);
+    if(sd){if(m<WIN_MATIN.open)ftxt.textContent='🔒 Ouverture matin à 5h00';else if(m<WIN_SOIR.open)ftxt.textContent='🔒 Prochain créneau : soir 14h30';else ftxt.textContent="🔒 Fenêtres fermées pour aujourd'hui";}
+    else ftxt.textContent=infirmDate>now?'📅 Confirme le jour J (5h–6h30 ou 14h30–15h30)':'🔒 Journée passée';}
+  updWAInfirmButtons(now);
+}
+function onInfirmNom(){
+  const nom=document.getElementById('iNomSel').value;
+  const day=infirmDate.getDate();
+  document.getElementById('iDateDisp').textContent=fmtDate(infirmDate)+(isFerie(day)?' 🟣 Férié':'');
+  const cren=document.getElementById('iCreneaux'),repos=document.getElementById('iRepos'),conge=document.getElementById('iConge'),abs=document.getElementById('iAbs');
+  [cren,repos,conge,abs].forEach(e=>e.style.display='none');
+  if(!nom)return;
+  const dKey=dateKey(infirmDate);
+  if(IP_ABS[nom]?.includes(day)){abs.style.display='block';return}
+  const secM=IP_MATIN[nom]?.[day]||null,secS=IP_SOIR[nom]?.[day]||null;
+  if(!secM&&!secS){repos.style.display='block';return}
+  cren.style.display='block';
+  const presM=getPresInf(dKey,nom,'matin'),presS=getPresInf(dKey,nom,'soir');
+  if(secM){
+    document.getElementById('iMatinCard').style.display='block';
+    document.getElementById('iMatinSec').textContent=secM;
+    document.getElementById('iMatinLieu').textContent=(SEC_INF[secM]||SEC_INFO[secM])?.label||secM;
+    document.getElementById('iMatinHeure').textContent=presM?'✅ Pointé':'—';
+    const pill=document.getElementById('iMatinPill');if(presM){pill.className='conf-pill ok';pill.textContent='✅ Confirmé'}else{pill.className='conf-pill wait';pill.textContent='En attente'}
+  }else document.getElementById('iMatinCard').style.display='none';
+  if(secS){
+    document.getElementById('iSoirCard').style.display='block';
+    document.getElementById('iSoirSec').textContent=secS;
+    document.getElementById('iSoirLieu').textContent=(SEC_INF[secS]||SEC_INFO[secS])?.label||secS;
+    document.getElementById('iSoirHeure').textContent=presS?'✅ Pointé':'—';
+    const pill=document.getElementById('iSoirPill');if(presS){pill.className='conf-pill ok';pill.textContent='✅ Confirmé'}else{pill.className='conf-pill wait';pill.textContent='En attente'}
+    document.getElementById('waBtnISoir').style.display='flex';
+  }else{document.getElementById('iSoirCard').style.display='none';document.getElementById('waBtnISoir').style.display='none'}
+  buildWAInfirmLinks(nom,day,secM,secS);updWAInfirmButtons(new Date());
+}
+function buildWAInfirmLinks(nom,day,secM,secS){
+  const heure=fmtHeure(new Date());
+  let msgM=`✅ *PRÉSENCE MATIN — INFIRMIÈRE*\n\n🩺 *${nom}*\n📅 *${fmtDate(infirmDate)}*\n⏰ *${heure}*\n\n☀️ Secteur *${secM||'—'}*`;
+  if(secM){const info=SEC_INF[secM]||SEC_INFO[secM];if(info)msgM+=` — ${info.label}`;}
+  msgM+=`\n⏱ 6h — matin`;
+  document.getElementById('waBtnIMatin').href=`https://wa.me/?text=${encodeURIComponent(msgM)}`;
+  if(secS){let msgS=`✅ *PRÉSENCE SOIR — INFIRMIÈRE*\n\n🩺 *${nom}*\n📅 *${fmtDate(infirmDate)}*\n⏰ *${heure}*\n\n🌙 Secteur *${secS||'—'}*`;if(secS){const info=SEC_INF[secS]||SEC_INFO[secS];if(info)msgS+=` — ${info.label}`;}msgS+=`\n⏱ 4h — soir`;document.getElementById('waBtnISoir').href=`https://wa.me/?text=${encodeURIComponent(msgS)}`;}
+}
+function updWAInfirmButtons(now){
+  const nom=document.getElementById('iNomSel').value;if(!nom)return;
+  const dKey=dateKey(infirmDate),day=infirmDate.getDate();
+  const presM=getPresInf(dKey,nom,'matin'),presS=getPresInf(dKey,nom,'soir');
+  const sd=sameDay(now,infirmDate);const openM=sd&&inWin(now,WIN_MATIN);const openS=sd&&inWin(now,WIN_SOIR);
+  const bm=document.getElementById('waBtnIMatin'),bs=document.getElementById('waBtnISoir');
+  const secM=IP_MATIN[nom]?.[day],secS=IP_SOIR[nom]?.[day];
+  if(secM||secS)buildWAInfirmLinks(nom,day,secM,secS);
+  if(presM){bm.className='wa-btn confirmed';bm.innerHTML='✅ Présence MATIN confirmée'}
+  else if(openM){bm.className='wa-btn inf-matin';bm.innerHTML=`<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> ${nom.split(' ')[0]} · ${infirmDate.getDate()} Mai · ${secM||'—'} ☀️`;}
+  else bm.className='wa-btn disabled';
+  if(presS){bs.className='wa-btn confirmed';bs.innerHTML='✅ Présence SOIR confirmée'}
+  else if(openS){bs.className='wa-btn inf-soir';bs.innerHTML=`<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> ${nom.split(' ')[0]} · ${infirmDate.getDate()} Mai · ${secS||'—'} 🌙`;}
+  else bs.className='wa-btn disabled';
+}
+function onWAInfirmClick(shift){
+  const nom=document.getElementById('iNomSel').value;if(!nom)return true;
+  const dKey=dateKey(infirmDate);const heure=fmtHeure(new Date());
+  setPresInf(dKey,nom,shift,true);
+  const el=shift==='matin'?document.getElementById('iMatinHeure'):document.getElementById('iSoirHeure');
+  if(el)el.textContent=`✅ Pointé à ${heure}`;
+  showToast(`✅ Présence ${shift} enregistrée !`,'ok');setTimeout(()=>onInfirmNom(),400);return true;
+}
+
+// ═══════════ ADMIN ═══════════
+let currentDate=(()=>{const t=new Date();return(t.getMonth()===4&&t.getFullYear()===2026)?t:new Date(2026,4,1)})();
+let activeTab='planning';let adminClockInt=null;
+function startAdminClock(){
+  if(adminClockInt)clearInterval(adminClockInt);
+  function tick(){const now=new Date();const el=document.getElementById('aclock');if(el)el.textContent=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;updAdminWindow(now)}
+  tick();adminClockInt=setInterval(tick,1000);
+}
+function updAdminWindow(now){
+  const bar=document.getElementById('winbar');if(!bar)return;
+  const sd=sameDay(now,currentDate);const openM=sd&&inWin(now,WIN_MATIN);const openS=sd&&inWin(now,WIN_SOIR);
+  const dm=document.getElementById('wdotM'),tm=document.getElementById('wtxtM');
+  const ds=document.getElementById('wdotS'),ts=document.getElementById('wtxtS');
+  if(openM){dm.className='wdot on-m';tm.textContent='☀️ Matin OUVERTE'}else{dm.className='wdot off';tm.textContent='☀️ Matin fermée'}
+  if(openS){ds.className='wdot on-s';ts.textContent='🌙 Soir OUVERTE'}else{ds.className='wdot off';ts.textContent='🌙 Soir fermée'}
+  bar.className=`winbar ${openM?'open-m':openS?'open-s':'closed'}`;
+}
+function changeDay(d){const nd=new Date(currentDate);nd.setDate(nd.getDate()+d);if(nd.getMonth()===4&&nd.getFullYear()===2026){currentDate=nd;render()}}
+function switchTab(tab,el){
+  activeTab=tab;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));document.getElementById('v'+tab).classList.add('on');
+  if(tab==='quinzaines')renderQuinzaines();if(tab==='heures')renderHeures();if(tab==='presences')renderPresManuelle();
+}
+function switchSubTab(sub){
+  document.getElementById('subTabAS').className='sub-tab on as';document.getElementById('subTabInf').className='sub-tab';
+  document.getElementById('presAS').style.display='block';document.getElementById('presINF').style.display='none';
+  if(sub==='inf'){document.getElementById('subTabInf').className='sub-tab on';document.getElementById('subTabAS').className='sub-tab';document.getElementById('presINF').style.display='block';document.getElementById('presAS').style.display='none';renderPresInfirm();}
+  else renderPresManuelle();
+}
+function buildOpts(day,shift,cur){
+  const pd=shift==='matin'?MP:SP;const key=dayKey(day);const over=(state[key]||{})[shift]||{};
+  const secNom={};
+  Object.entries(pd).forEach(([n,j])=>{if(j[day])secNom[j[day]]=n});
+  Object.entries(over).forEach(([s,n])=>{secNom[s]=n||null});
+  const occ=new Set(Object.values(secNom).filter(Boolean));
+  const dispos=[],dejaAff=[];
+  NOMS.forEach(n=>{if(occ.has(n))dejaAff.push(n);else dispos.push(n)});
+  let o=`<option value="—">— Aucun(e)</option>`;
+  if(dispos.length){o+=`<optgroup label="✅ Disponibles">`;dispos.forEach(n=>{o+=`<option value="${n}"${n===cur?'selected':''}>${n}</option>`});o+=`</optgroup>`}
+  if(dejaAff.length){o+=`<optgroup label="⚠️ Déjà affectées">`;dejaAff.forEach(n=>{o+=`<option value="${n}"${n===cur?'selected':''}>${n} (déjà affectée)</option>`});o+=`</optgroup>`}
+  o+=`<option value="Remplaçant(e) ext."${cur==='Remplaçant(e) ext.'?'selected':''}>Remplaçant(e) ext.</option>`;
+  return o;
+}
+function getDayPlan(d){
+  const day=d.getDate(),key=dateKey(d);
+  const overM=(state[key]||{}).matin||{},overS=(state[key]||{}).soir||{};
+  const res={};
+  Object.keys(SEC_INFO).forEach(s=>{
+    let pm=null,ps=null;
+    Object.entries(MP).forEach(([n,j])=>{if(j[day]===s)pm=n});
+    Object.entries(SP).forEach(([n,j])=>{if(j[day]===s)ps=n});
+    res[s]={matin:{planned:pm,actual:overM[s]!==undefined?overM[s]:pm},soir:{planned:ps,actual:overS[s]!==undefined?overS[s]:ps}};
+  });
+  return res;
+}
+function render(){
+  const day=currentDate.getDate();
+  const ferieTag=isFerie(day)?` <span class="ferie-badge">★ Férié</span>`:'';
+  document.getElementById('curDate').innerHTML=fmtDate(currentDate)+ferieTag;
+  const plan=getDayPlan(currentDate);
+  buildGrid('gridM',plan,'matin');buildGrid('gridS',plan,'soir');buildRecap(plan);buildMiniTotaux();
+  if(document.getElementById('planINF').style.display!=='none'){buildGridInf('gridInfM','matin');buildGridInf('gridInfS','soir');buildRecapInf();}
+  if(activeTab==='presences')renderPresManuelle();
+  if(activeTab==='quinzaines')renderQuinzaines();
+  if(activeTab==='heures')renderHeures();
+}
+function buildGrid(gid,plan,shift){
+  const grid=document.getElementById(gid);grid.innerHTML='';
+  const day=currentDate.getDate(),maj=isMaj(day),taux=maj?T_MAJ:T_SEM,h=shift==='matin'?H_M:H_S;
+  const eur=(h*taux).toFixed(0);const dKey=dateKey(currentDate);
+  Object.entries(SEC_INFO).forEach(([code,info])=>{
+    const{planned,actual}=plan[code][shift];
+    const isRemp=planned&&actual&&actual!==planned,isAbs=!actual||actual==='—';
+    const badge=isAbs?`<span class="sbadge bf">⚠️ Libre</span>`:isRemp?`<span class="sbadge br">🔄 Remplacé</span>`:planned?`<span class="sbadge bp">📋 Planning</span>`:'';
+    const majTag=maj?`<span style="padding:1px 3px;border-radius:2px;font-size:.5rem;font-weight:700;background:rgba(185,122,255,.14);color:var(--purple);margin-left:3px">${isFerie(day)?'FÉR':'DIM'}</span>`:'';
+    const opts=buildOpts(day,shift,actual||'—');
+    const shiftLbl=shift==='matin'?'☀️ Matin':'🌙 Soir';
+    const waMsg=encodeURIComponent(`🗺️ *${fmtDate(currentDate)} — ${shiftLbl}*\n\n📍 *${code} — ${info.label}*\n👤 *${actual||'—'}*${isRemp?`\n🔄 Remplace : ${planned}`:''}\n💶 ${h}h×${taux}€=${eur}€${maj?' (Dim/Fér)':''}`);
+    const nomActuel=actual&&actual!=='—'?actual:null;
+    const presConf=nomActuel?getPres(dKey,nomActuel,shift):false;
+    const presTag=nomActuel?`<span style="display:inline-flex;align-items:center;gap:3px;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:4px;${presConf?'background:rgba(35,209,139,.12);color:var(--green)':'background:rgba(107,122,153,.1);color:var(--muted2)'}">${presConf?'✅ Présente':'⏳ En attente'}</span>`:'';
+    const card=document.createElement('div');card.className=`scard c-${code}`;
+    card.innerHTML=`<div class="sc-top"><div><div class="sc-code c-${code}">${code}${majTag}</div><div class="sc-name">${info.label}</div></div>${badge}</div>
+      <div class="sc-plan"><span>${planned?`Planning : <strong>${planned}</strong>`:'<em style="color:var(--muted2)">Non planifié</em>'}</span><span style="font-family:'JetBrains Mono',monospace;font-size:.66rem;color:${isAbs?'var(--muted2)':'var(--green)'}">${isAbs?'—':eur+' €'}</span></div>
+      ${presTag?`<div style="margin-bottom:5px">${presTag}</div>`:''}
+      <div class="sw"><select class="sel" id="sel-${shift}-${code}" onchange="onSel('${shift}','${code}',this.value)">${opts}</select><span class="sarr">▾</span></div>
+      <a class="wa-s" href="https://wa.me/?text=${waMsg}" target="_blank"><svg class="wa-ico-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> Partager WhatsApp</a>`;
+    grid.appendChild(card);
+  });
+}
+function buildRecap(plan){
+  const tb=document.getElementById('recapBody');tb.innerHTML='';
+  Object.entries(SEC_INFO).forEach(([c])=>{
+    const m=plan[c].matin,s=plan[c].soir;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="chip bg-${c}">${c}</span></td><td style="font-size:.74rem;font-weight:600">${m.actual&&m.actual!=='—'?m.actual:'<span style="color:var(--muted2)">—</span>'}</td><td style="font-size:.74rem">${s.actual&&s.actual!=='—'?s.actual:'<span style="color:var(--muted2)">—</span>'}</td>`;
+    tb.appendChild(tr);
+  });
+}
+function onSel(shift,code,val){
+  const key=dateKey(currentDate);if(!state[key])state[key]={};if(!state[key][shift])state[key][shift]={};
+  state[key][shift][code]=val==='—'?null:val;saveState();
+  const plan=getDayPlan(currentDate);buildGrid('gridM',plan,'matin');buildGrid('gridS',plan,'soir');buildRecap(plan);buildMiniTotaux();
+  if(activeTab==='quinzaines')renderQuinzaines();if(activeTab==='heures')renderHeures();
+}
+
+// ═══ PRÉSENCES AS ═══
+function renderPresManuelle(){
+  const day=currentDate.getDate(),dKey=dateKey(currentDate),plan=getDayPlan(currentDate);
+  const el=document.getElementById('presManuelleList');
+  const workers=[];
+  NOMS.forEach(nom=>{
+    let hasM=false,hasS=false;
+    Object.values(plan).forEach(p=>{if(p.matin.actual===nom)hasM=true;if(p.soir.actual===nom)hasS=true});
+    if(MP[nom]?.[day])hasM=true;if(SP[nom]?.[day])hasS=true;
+    if(hasM||hasS)workers.push({nom,hasM,hasS});
+  });
+  if(!workers.length){el.innerHTML=`<div style="color:var(--muted2);font-size:.78rem;padding:14px">Aucune travailleuse planifiée ce jour.</div>`;return}
+  el.innerHTML=workers.map(({nom,hasM,hasS})=>{
+    const presM=getPres(dKey,nom,'matin'),presS=getPres(dKey,nom,'soir');
+    return`<div class="pres-row"><div><div class="pres-name">${nom}</div><div style="font-size:.64rem;color:var(--muted2);margin-top:2px">${hasM?'☀️ Matin':''}${hasM&&hasS?' · ':''}${hasS?'🌙 Soir':''}</div></div>
+      <div class="pres-btns">${hasM?`<button class="pres-btn ${presM?'m-on':'m-off'}" onclick="togglePresAdmin('${nom}','matin',${presM},'${dKey}')">☀️ ${presM?'Présente':'Absent'}</button>`:''}${hasS?`<button class="pres-btn ${presS?'s-on':'s-off'}" onclick="togglePresAdmin('${nom}','soir',${presS},'${dKey}')">🌙 ${presS?'Présente':'Absent'}</button>`:''}</div></div>`;
+  }).join('');
+}
+function togglePresAdmin(nom,shift,current,dKey){
+  setPres(dKey,nom,shift,!current);buildMiniTotaux();renderPresManuelle();
+  const plan=getDayPlan(currentDate);buildGrid('gridM',plan,'matin');buildGrid('gridS',plan,'soir');
+  if(activeTab==='quinzaines')renderQuinzaines();if(activeTab==='heures')renderHeures();
+}
+
+// ═══ PRÉSENCES INFIRMIÈRES ═══
+function renderPresInfirm(){
+  const day=currentDate.getDate(),dKey=dateKey(currentDate);
+  const el=document.getElementById('presInfirmList');
+  const workers=[];
+  NOMS_INF.forEach(nom=>{
+    const isAbs=IP_ABS[nom]?.includes(day)||false;
+    const hasM=!isAbs&&!!(IP_MATIN[nom]?.[day]);
+    const hasS=!isAbs&&!!(IP_SOIR[nom]?.[day]);
+    if(hasM||hasS||isAbs)workers.push({nom,hasM,hasS,isAbs});
+  });
+  if(!workers.length){el.innerHTML=`<div style="color:var(--muted2);font-size:.78rem;padding:14px">Aucune infirmière planifiée ce jour.</div>`;return}
+  el.innerHTML=workers.map(({nom,hasM,hasS,isAbs})=>{
+    const presM=getPresInf(dKey,nom,'matin'),presS=getPresInf(dKey,nom,'soir');
+    const secM=IP_MATIN[nom]?.[day]||'';const secS=IP_SOIR[nom]?.[day]||'';
+    return`<div class="pres-row"><div><div class="pres-name">${nom} <span class="inf-badge">🩺</span></div>
+      <div style="font-size:.64rem;color:var(--muted2);margin-top:2px">${isAbs?'<span class="abs-badge">🤒 ABSENT(E)</span>':''}${hasM?`☀️ <span style="color:var(--teal);font-family:'JetBrains Mono',monospace">${secM}</span>`:''}${hasM&&hasS?' · ':''}${hasS?`🌙 <span style="color:#9d7de0;font-family:'JetBrains Mono',monospace">${secS}</span>`:''}</div></div>
+      <div class="pres-btns">${hasM?`<button class="pres-btn ${presM?'m-on':'m-off'}" onclick="togglePresInfirm('${nom}','matin',${presM},'${dKey}')">☀️ ${presM?'Présente':'Absent'}</button>`:''}${hasS?`<button class="pres-btn ${presS?'s-on':'s-off'}" onclick="togglePresInfirm('${nom}','soir',${presS},'${dKey}')">🌙 ${presS?'Présente':'Absent'}</button>`:''}${isAbs?`<span style="font-size:.65rem;color:var(--muted2);padding:3px 8px;border:1px solid var(--border);border-radius:5px;">—</span>`:''}</div></div>`;
+  }).join('');
+}
+function togglePresInfirm(nom,shift,current,dKey){setPresInf(dKey,nom,shift,!current);renderPresInfirm();showToast(`🩺 Présence ${nom} (${shift}) mise à jour`,'info')}
+
+// ═══ GRILLE INFIRMIÈRES ADMIN ═══
+function switchPlanTab(sub){
+  document.getElementById('planTabAS').className='sub-tab on as';document.getElementById('planTabInf').className='sub-tab';
+  document.getElementById('planAS').style.display='block';document.getElementById('planINF').style.display='none';
+  if(sub==='inf'){document.getElementById('planTabInf').className='sub-tab on';document.getElementById('planTabAS').className='sub-tab';document.getElementById('planAS').style.display='none';document.getElementById('planINF').style.display='block';buildGridInf('gridInfM','matin');buildGridInf('gridInfS','soir');buildRecapInf();}
+}
+function buildGridInf(gid,shift){
+  const grid=document.getElementById(gid);grid.innerHTML='';
+  const day=currentDate.getDate(),dKey=dateKey(currentDate);
+  const planSrc=shift==='matin'?IP_MATIN:IP_SOIR;
+  NOMS_INF.forEach(nom=>{
+    const isAbs=IP_ABS[nom]?.includes(day)||false;
+    if(isAbs){
+      const card=document.createElement('div');card.className='scard';card.style.borderLeftColor='var(--red)';
+      card.innerHTML=`<div class="sc-top"><div><div class="sc-code" style="color:var(--red)">${nom}</div><div class="sc-name">Absence</div></div><span class="abs-badge">🤒 ABS</span></div>`;
+      grid.appendChild(card);return;
+    }
+    const secOrig=planSrc[nom]?.[day];if(!secOrig)return;
+    const presConf=getPresInf(dKey,nom,shift);
+    const presTag=`<span style="display:inline-flex;align-items:center;gap:3px;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:4px;${presConf?'background:rgba(35,209,139,.12);color:var(--green)':'background:rgba(107,122,153,.1);color:var(--muted2)'}">${presConf?'✅ Présente':'⏳ En attente'}</span>`;
+    const secColor=SEC_COLORS[secOrig]||'#8892b0';
+    const infoSec=SEC_INF[secOrig]||{label:secOrig};
+    const card=document.createElement('div');card.className='scard';card.style.borderLeftColor=secColor;
+    card.innerHTML=`<div class="sc-top"><div><div class="sc-code" style="color:${secColor}">${nom} <span class="inf-badge">🩺</span></div><div class="sc-name">${secOrig} — ${infoSec.label}</div></div><span class="sbadge bp">📋 Planning</span></div>
+      <div style="margin-bottom:5px">${presTag}</div>`;
+    grid.appendChild(card);
+  });
+  if(!grid.innerHTML)grid.innerHTML=`<div style="color:var(--muted2);font-size:.78rem;padding:14px;grid-column:1/-1">Aucune infirmière planifiée.</div>`;
+}
+function buildRecapInf(){
+  const tb=document.getElementById('recapInfBody');tb.innerHTML='';
+  const day=currentDate.getDate();
+  NOMS_INF.forEach(nom=>{
+    const m=IP_MATIN[nom]?.[day],s=IP_SOIR[nom]?.[day];
+    const isAbs=IP_ABS[nom]?.includes(day);
+    if(!m&&!s&&!isAbs)return;
+    const tr=document.createElement('tr');
+    const mc=isAbs?`<span class="abs-badge">ABS</span>`:m?`<span class="chip" style="background:rgba(0,0,0,.2);color:${SEC_COLORS[m]||'#aaa'}">${m}</span>`:'<span style="color:var(--muted2)">—</span>';
+    const sc=s?`<span class="chip" style="background:rgba(0,0,0,.2);color:${SEC_COLORS[s]||'#aaa'}">${s}</span>`:'<span style="color:var(--muted2)">—</span>';
+    tr.innerHTML=`<td style="font-size:.74rem;font-weight:700">${nom}</td><td>${mc}</td><td>${sc}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// ═══ CALCUL ═══
+function buildAllWork(){
+  const work={};NOMS.forEach(n=>{work[n]=[]});
+  for(let d=1;d<=31;d++){
+    const key=dayKey(d);const overM=(state[key]||{}).matin||{},overS=(state[key]||{}).soir||{};
+    const mm={},sm={};
+    Object.entries(MP).forEach(([n,j])=>{if(j[d])mm[j[d]]=n});Object.entries(overM).forEach(([s,n])=>{mm[s]=n||null});
+    Object.entries(SP).forEach(([n,j])=>{if(j[d])sm[j[d]]=n});Object.entries(overS).forEach(([s,n])=>{sm[s]=n||null});
+    Object.entries(mm).forEach(([sec,nom])=>{
+      if(!nom||nom==='—'||nom==='Remplaçant(e) ext.')return;if(!work[nom])return;
+      work[nom].push({day:d,shift:'matin',sec,maj:isMaj(d),present:getPres(key,nom,'matin')});
+    });
+    Object.entries(sm).forEach(([sec,nom])=>{
+      if(!nom||nom==='—'||nom==='Remplaçant(e) ext.')return;if(!work[nom])return;
+      work[nom].push({day:d,shift:'soir',sec,maj:isMaj(d),present:getPres(key,nom,'soir')});
+    });
+  }
+  return work;
+}
+function calcStats(jours,presOnly=false){
+  let semM=0,majM=0,semS=0,majS=0;
+  jours.forEach(j=>{if(presOnly&&!j.present)return;if(j.shift==='matin'){j.maj?majM++:semM++}else{j.maj?majS++:semS++}});
+  const hTot=(semM+majM)*H_M+(semS+majS)*H_S;
+  const total=semM*H_M*T_SEM+majM*H_M*T_MAJ+semS*H_S*T_SEM+majS*H_S*T_MAJ;
+  return{semM,majM,semS,majS,hTot,total};
+}
+function buildMiniTotaux(){
+  const work=buildAllWork();let html='',grand=0;
+  Object.entries(work).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([nom,jours])=>{
+    const{hTot,total}=calcStats(jours,true);grand+=total;
+    html+=`<div class="mini-total-item"><span style="font-weight:600;font-size:.74rem">${nom}</span><span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:${total>0?'var(--green)':'var(--muted2)'};font-weight:700">${total>0?total.toFixed(2)+' €':'—'}</span></div>`;
+  });
+  html+=`<div style="display:flex;justify-content:space-between;padding:6px 0 0;margin-top:3px;border-top:1px solid var(--border);color:var(--text)"><span style="font-weight:800;font-size:.76rem">TOTAL</span><span style="font-family:'JetBrains Mono',monospace;font-size:.84rem;font-weight:800;color:var(--green)">${grand.toFixed(2)} €</span></div>`;
+  document.getElementById('miniTotaux').innerHTML=html;
+}
+function renderQuinzaines(){renderQ('q1table',1,15);renderQ('q2table',16,31)}
+function renderQ(tableId,from,to){
+  const tb=document.getElementById(tableId).querySelector('tbody');tb.innerHTML='';
+  const work=buildAllWork();let totM=0,totS=0,totH=0,totE=0;const rows=[];
+  Object.entries(work).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([nom,jours])=>{
+    const filtered=jours.filter(j=>j.day>=from&&j.day<=to);
+    const{semM,majM,semS,majS,hTot,total}=calcStats(filtered,true);
+    const nM=semM+majM,nS=semS+majS;totM+=nM;totS+=nS;totH+=hTot;totE+=total;rows.push({nom,nM,nS,hTot,total});
+  });
+  rows.forEach(({nom,nM,nS,hTot,total})=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:700">${nom}</td><td><span class="pres-count pres-m">${nM}j × ${H_M}h</span></td><td><span class="pres-count pres-s">${nS}j × ${H_S}h</span></td><td class="qh">${hTot.toFixed(1)}h</td><td class="qeuro">${total>0?total.toFixed(2)+' €':'—'}</td>`;
+    tb.appendChild(tr);
+  });
+  const tr=document.createElement('tr');tr.className='total-row';
+  tr.innerHTML=`<td>TOTAL</td><td class="pres-count pres-m">${totM}j</td><td class="pres-count pres-s">${totS}j</td><td class="qh">${totH.toFixed(1)}h</td><td class="qeuro">${totE.toFixed(2)} €</td>`;
+  tb.appendChild(tr);
+}
+function renderHeures(){
+  const work=buildAllWork();let gtE=0,gtH=0,gtSM=0,gtMM=0,gtSS=0,gtMS=0;
+  const grid=document.getElementById('pgrid');grid.innerHTML='';
+  Object.entries(work).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([nom,jours])=>{
+    const{semM,majM,semS,majS,hTot,total}=calcStats(jours,true);
+    gtE+=total;gtH+=hTot;gtSM+=semM;gtMM+=majM;gtSS+=semS;gtMS+=majS;
+    const sorted=[...jours].sort((a,b)=>a.day-b.day||(a.shift==='matin'?-1:1));
+    const lines=sorted.map(j=>{
+      const h=j.shift==='matin'?H_M:H_S,taux=j.maj?T_MAJ:T_SEM,e=(h*taux).toFixed(2);
+      const ferTag=isFerie(j.day)?`<span class="ferie-pill">FÉR</span>`:j.maj?`<span class="we-pill">DIM</span>`:'';
+      return`<div class="dline"><span class="dlbl">${dayLbl(j.day)}</span>${ferTag}${j.shift==='matin'?`<span class="sl sl-m">☀️${H_M}h</span>`:`<span class="sl sl-s">🌙${H_S}h</span>`}<span class="chip bg-${j.sec}" style="font-size:.55rem">${j.sec}</span><div class="pres-dot ${j.present?'ok':'no'}"></div><span class="deuro">${j.present?`${taux}€×${h}h=<strong>${e}€</strong>`:'<span style="color:var(--muted2)">Absent</span>'}</span></div>`;
+    }).join('');
+    const card=document.createElement('div');card.className='pc2';
+    card.innerHTML=`<div class="pc2-hd"><div class="pc2-name">${nom}</div><div class="pc2-euro">${total>0?total.toFixed(2)+' €':'0 €'}</div></div>
+      <div class="pc2-body">${jours.length===0?'<div style="color:var(--muted2);font-size:.72rem;text-align:center;padding:8px">Aucun créneau</div>':lines}${jours.length>0?`<div class="ptrow"><div><div class="pth"><strong>${hTot.toFixed(1)}h</strong> confirmées</div><div style="font-size:.6rem;color:var(--muted2);margin-top:1px">Sem/Sam: ${semM}m+${semS}s · Dim/Fér: ${majM}m+${majS}s</div></div><div class="pte">${total.toFixed(2)} €</div></div>`:''}</div>`;
+    grid.appendChild(card);
+  });
+  document.getElementById('gtE').textContent=gtE.toFixed(2)+' €';
+  document.getElementById('gtH').textContent=gtH.toFixed(1)+'h';
+  document.getElementById('gtSM').textContent=`${gtSM}j×${H_M}h@22€=${(gtSM*H_M*T_SEM).toFixed(0)}€`;
+  document.getElementById('gtMM').textContent=`${gtMM}j×${H_M}h@23€=${(gtMM*H_M*T_MAJ).toFixed(0)}€`;
+  document.getElementById('gtSS').textContent=`${gtSS}s×${H_S}h@22€=${(gtSS*H_S*T_SEM).toFixed(0)}€`;
+  document.getElementById('gtMS').textContent=`${gtMS}s×${H_S}h@23€=${(gtMS*H_S*T_MAJ).toFixed(0)}€`;
+}
+
+function showToast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>{t.className='toast'},4000)}
+</script>
+</body>
+</html>
